@@ -1,3 +1,7 @@
+# 통합
+# 1. 7days -> 2days
+# 2. 1day  -> 2days
+
 import pandas as pd
 import numpy as np
 import tensorflow as tf
@@ -197,9 +201,11 @@ def train_data(x_train, x_test, x_val, y_train, y_test, y_val, X_test):
         Y_pred = abs(Y_pred.round(2))
         # print('y_pred.shape : ', Y_pred.shape)  #(81, 48, 1)
         pred_list.append(Y_pred)
-        
+    
     loss_list = np.array(loss_list)
     loss_list = loss_list.reshape(9,-1)
+    loss_list[:,0] = np.mean(loss_list[:,0])
+    loss_list[:,1] = np.mean(loss_list[:,1])
 
     pred_list = np.array(pred_list)
     pred_list = pred_list.reshape(3888,-1)
@@ -220,3 +226,28 @@ submission.loc[submission.id.str.contains("Day7"), "q_0.1":] = pred1
 submission.loc[submission.id.str.contains("Day8"), "q_0.1":] = pred2
 
 submission.to_csv('./dacon/submission/unite_submission_7days.csv', index=True, encoding='cp949')
+
+
+'''
+7days --> 2days
+loss1 : 
+ [[ 1.79752672 17.97526741]
+ [ 3.59507251 17.97537041]
+ [ 1.46266806  3.97712421]
+ [ 7.19009256 17.97522926]
+ [ 4.56720018  9.13440037]
+ [ 2.52119112  4.69118643]
+ [ 2.37490249  4.37775278]
+ [ 3.59858918  5.98614693]
+ [ 5.85970116 46.40187836]]
+loss2 :
+ [[ 0.69206583  5.36546469]
+ [ 0.97020382  3.51236701]
+ [ 1.63487291  4.59538507]
+ [ 1.66744721  3.70037866]
+ [ 4.19017506  8.38035011]
+ [ 2.06325221  3.93061662]
+ [ 2.66030622  4.84853077]
+ [ 2.4321444   4.72335529]
+ [ 2.89484596 10.96673393]]
+'''

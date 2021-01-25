@@ -7,6 +7,7 @@ data = np.load('./dacon/npy/dacon_test.npy')
 
 print(data.shape)   #(27216, 6)
 
+  
 #==================================# x2 제출용==================================================
 
 def split_xy4 (data, time_steps):
