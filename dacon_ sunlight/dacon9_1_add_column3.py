@@ -358,6 +358,7 @@ submission.to_csv('./dacon/submission/submission0126_add_column/submission_7_2.c
 # submission.to_csv('./dacon/submission/unite_submission_addmodel_quantile.csv', index=False, encoding='cp949') #score :
 # submission.to_csv('./dacon/submission/unite_submission_td.csv', index=False, encoding='cp949')                #score :1.9780125974	
 # submission.to_csv('./dacon/submission/unite_submission_td_addmodel2.csv', index=False, encoding='cp949')        #score :2.0518367045
+# submission.to_csv('./dacon/submission/unite_submission_add_column.csv', index=False, encoding='cp949')         #score :
 # submission.to_csv('./dacon/submission/unite_submission_add_column2.csv', index=False, encoding='cp949')         #score :
 submission.to_csv('./dacon/submission/unite_submission_add_column3.csv', index=False, encoding='cp949')         #score :
 
@@ -367,6 +368,6 @@ submission.to_csv('./dacon/submission/unite_submission_add_column3.csv', index=F
 
 # 1. 컬럼 추가          -> loss_mean :  1.9431294070349798     -> submission_add_column
 # 2. 모델, lr, fac 튜닝 -> loss_mean :  2.0340065823660956     -> submission_add_column2
-# 3. 컬럼 삭제          ->
+# 3. 컬럼 삭제          -> loss_mean :  1.9652686847580805     -> submission_add_column3
 # 4. 모델 conv1d
 '''

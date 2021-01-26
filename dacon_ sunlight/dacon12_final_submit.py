@@ -1,14 +1,7 @@
-
-
 # 특정 열이 전체 일정한 수로 예측
 # 그 열의 quantile만 별도로 학습시 문제 없음
 # 훈련할때마다 해당 열이 달라짐
 # 해당열의 훈련중 loss값 거의 일정
-# --> 해당 열 두번 훈련해보기 OOOOOOOOO
-# --> Hour_Minute 컬럼 
-
-
-#dacon7_1_unite_addmodel_submit 복사
 
 import pandas as pd
 import numpy as np
@@ -29,7 +22,13 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import StandardScaler
 from tensorflow.keras.backend import mean, maximum
 
-
+# 함수 : GHI column 추가
+def Add_features(data):
+    data['cos'] = np.cos(np.pi/2 - np.abs(data['Hour']%12 - 6)/6*np.pi/2)
+    data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
+    data.drop(['cos'], axis= 1, inplace = True)
+    # data["Hour_Minute"] = data["Hour"] * 2 + data["Minute"] // 30
+    return data 
 
 # =====================================================데이터 train(52560, 9), submission(7776, 10)
 
@@ -49,71 +48,16 @@ submission = pd.read_csv('./dacon/data/sample_submission.csv')
 # # 중복된 행의 데이터만 표시하기
 # print(test[test.duplicated()])
 
-# =====================================================================함수 : 컬럼 추가
 
-# 함수 : GHI column 추가
-def Add_features(data):
-    data['cos'] = np.cos(np.pi/2 - np.abs(data['Hour']%12 - 6)/6*np.pi/2)
-    data.insert(1,'GHI',data['DNI']*data['cos']+data['DHI'])
-    data.drop(['cos'], axis= 1, inplace = True)
-    data["Hour_Minute"] = data["Hour"] * 2 + data["Minute"] // 30
-    return data 
-    
-# 함수 : Hour_Minute column 추가
-def Add_features_hour_minute(data):
-    data['Hour_Minute'] = data["Hour"] * 2 + data["Minute"] // 30
-    return data 
-
-# =====================================================================함수 : 모델
-
-def mymodel1():
-    # 1. 모델구성
-    model = Sequential()
-    # model.add(Dense(128, activation = 'relu',input_shape = (x_train.shape[1],x_train.shape[2])))
-    model.add(Dense(128, activation = 'relu',input_dim = 8))
-    model.add(Dense(64, activation = 'relu'))
-    model.add(Dense(32, activation = 'relu'))
-    model.add(Dense(16, activation = 'relu'))
-    model.add(Dense(2, activation = 'relu'))
-    # model.add(Reshape((1,2)))
-    model.add(Dense(2))
-    return model
-
-def mymodel2():
-    # 1. 모델구성
-    model = Sequential()
-    # model.add(Dense(128, activation = 'relu',input_shape = (x_train.shape[1],x_train.shape[2])))
-    # model.add(Dense(128, activation = 'relu',input_dim = 8))
-    # model.add(Dense(64, activation = 'relu'))
-    # model.add(Dense(32, activation = 'relu'))
-    model.add(Dense(16, activation = 'relu', input_dim = 8))
-    model.add(Dense(2, activation = 'relu'))
-    # model.add(Reshape((1,2)))
-    model.add(Dense(2))
-    return model
-
-def Conv1D_model() :
-    model = Sequential()
-    model.add(Conv1D(filters=64, kernel_size=2, activation='relu', padding='same',input_shape=(x_train.shape[1], x_train.shape[2])))
-    # model.add(Conv1D(filters=128, kernel_size=2, activation='relu', padding='same'))
-    # model.add(Conv1D(filters=64, kernel_size=2, activation='relu', padding='same'))
-    model.add(Conv1D(filters=32, kernel_size=2, activation='relu', padding='same'))
-    model.add(Conv1D(filters=16, kernel_size=2, activation='relu', padding='same'))
-    model.add(Flatten())
-    model.add(Dense(32, activation='relu'))
-    model.add(Dense(16, activation='relu'))
-    model.add(Dense(8, activation='relu'))
-    model.add(Dense(2))
-    return model
 
 # =====================================================================함수 : train(이틀제외), test(predict 할 하루씩) 컬럼자르기
 def preprocess_data(data, is_train=True):
     
     data = Add_features(data)
-    data = Add_features_hour_minute(data)
     data = data.astype('float64')
+
     temp = data.copy()
-    temp = temp[['Hour_Minute','TARGET','GHI','DHI','DNI','WS','RH','T']]
+    temp = temp[['Hour','TARGET','GHI','DHI','DNI','WS','RH','T']]
 
     if is_train==True:          
     
@@ -125,7 +69,7 @@ def preprocess_data(data, is_train=True):
 
     elif is_train==False:
         
-        temp = temp[['Hour_Minute','TARGET','GHI','DHI','DNI','WS','RH','T']]
+        temp = temp[['Hour','TARGET','GHI','DHI','DNI','WS','RH','T']]
                               
         return temp.iloc[-48:, :]  
 
@@ -173,30 +117,21 @@ for i in range(81):
     df_test.append(temp)
 
 df_test = pd.concat(df_test)
-# print(df_test.shape)     #(3888, 7)  81일 
+print(df_test.shape)     #(3888, 7)  81일 
 # X_test.to_csv('./dacon/csv/X_test2.csv', index=False, encoding='cp949')
 
 # print(X_test.info())
 
-print(df_test.columns)
-print(df_test)
-
 X_test = df_test.to_numpy()
-# print('X_test   : ', X_test.shape)
-
-
+print('X_test   : ', X_test.shape)
 
 
 # =====================================================================데이터 np_train (52560-96, 10)
 df_train = preprocess_data(train)
 # df_train.to_csv('./dacon/csv/df_train.csv', index=False, encoding='cp949')
 # print(df_train.info())
-
-print(df_train.columns)
-print(df_train)
-
 np_train = df_train.to_numpy()
-# print('np_train : ' , np_train.shape)
+print('np_train : ' , np_train.shape)
 
 
 
@@ -236,10 +171,23 @@ x_test = scaler.transform(x_test)
 x_val = scaler.transform(x_val)
 X_test = scaler.transform(X_test)
 
-x_train = x_train.reshape(-1, 1, 8)
-x_test = x_test.reshape(-1, 1, 8)
-x_val = x_val.reshape(-1, 1, 8)
-X_test = X_test.reshape(-1, 1, 8)
+# x_train = x_train.reshape(-1, 1, 8)
+# x_test = x_test.reshape(-1, 1, 8)
+# x_val = x_val.reshape(-1, 1, 8)
+# X_test = X_test.reshape(-1, 1, 8)
+
+def mymodel():
+    model = Sequential()
+    # model.add(Dense(128, activation = 'relu',input_shape = (x_train.shape[1],x_train.shape[2])))
+    model.add(Dense(128, activation = 'relu',input_dim = 8))
+    model.add(Dense(64, activation = 'relu'))
+    model.add(Dense(32, activation = 'relu'))
+    model.add(Dense(16, activation = 'relu'))
+    model.add(Dense(2, activation = 'relu'))
+    # model.add(Reshape((1,2)))
+    model.add(Dense(2))
+    return model
+
 
 
 
@@ -254,22 +202,21 @@ def quantile_loss (q, y, pred):
 
 pred_list = []
 loss_list = []
-hist_list = []
 
 for q in quantiles : 
 
-        #2. 모델
-        model = Conv1D_model()
+        # 1. 모델구성
+        model = mymodel()
 
         #3. 컴파일, 훈련
         path = './dacon/modelcheckpoint/dacon_conv1d_{val_loss:.4f}.hdf5'
         er = EarlyStopping(monitor='val_loss', patience=10, mode='auto')
-        re = ReduceLROnPlateau(monitor='val_loss', patience=8, factor=0.3, verbose=1)
+        re = ReduceLROnPlateau(monitor='val_loss', patience=8, factor=0.5, verbose=1)
         # mo = ModelCheckpoint(filepath=path, monitor='val_loss', save_best_only=True, mode='auto')
 
-        opti = Adam(learning_rate=0.009)
+        opti = Adam()
         model.compile(loss=lambda y,pred: quantile_loss(q, y, pred), optimizer=opti , metrics='mae')
-        hist = model.fit(x_train, y_train, epochs=1000, batch_size=20, callbacks=[er, re], validation_data=(x_val, y_val), verbose=1)
+        model.fit(x_train, y_train, epochs=1000, batch_size=60, callbacks=[er, re], validation_data=(x_val, y_val), verbose=1)
         
         # 4. 평가, 예측  
         # loss  
@@ -283,7 +230,9 @@ for q in quantiles :
         # Y_pred = pd.DataFrame(Y_pred) 
         # Y_pred = pd.concat([Y_pred], axis=1)
         # Y_pred[Y_pred<0] = 0
+        # print(Y_pred.min,'      ', Y_pred.max)
         # Y_pred = Y_pred.to_numpy()
+
 
         #===============================================문제컬럼 재훈련 1차==============================================================
         if (Y_pred[0:1, 0] == Y_pred[20:21, 0]):        # day7 00시와 09시가 같으면
@@ -291,7 +240,7 @@ for q in quantiles :
             print(Y_pred[0:1, 0],   Y_pred[20:21, 0])
 
             #2. 모델
-            model = Conv1D_model()
+            model = mymodel()
 
             #3. 컴파일, 훈련
             path = './dacon/modelcheckpoint/dacon_conv1d_{val_loss:.4f}.hdf5'
@@ -299,9 +248,9 @@ for q in quantiles :
             re = ReduceLROnPlateau(monitor='val_loss', patience=8, factor=0.5, verbose=1)
             # mo = ModelCheckpoint(filepath=path, monitor='val_loss', save_best_only=True, mode='auto')
 
-            opti = Adam(learning_rate=0.005)
+            opti = Adam(learning_rate=0.09)
             model.compile(loss=lambda y,pred: quantile_loss(q, y, pred), optimizer=opti , metrics='mae')
-            hist = model.fit(x_train, y_train, epochs=200, batch_size=60, callbacks=[er, re], validation_data=(x_val, y_val), verbose=1)
+            model.fit(x_train, y_train, epochs=200, batch_size=60, callbacks=[er, re], validation_data=(x_val, y_val), verbose=1)
             
             # 4. 평가, 예측  
             # loss  
@@ -319,10 +268,6 @@ for q in quantiles :
             # Y_pred = Y_pred.to_numpy()
 
         #=============================================================================================================
-
-        # 최종 hist
-        hist_list.append(hist)
-
         # 최종 loss 
         loss_list.append(loss[0])
 
@@ -342,53 +287,24 @@ for q in quantiles :
         column_name = f'q_{q}'          #f string
         submission.loc[submission.id.str.contains("Day7"), column_name] = Y_pred[:, 0].round(2)  # Day7 (3888, 9)
         submission.loc[submission.id.str.contains("Day8"), column_name] = Y_pred[:, 1].round(2)   # Day8 (3888, 9)
-        submission.to_csv(f'./dacon/submission/submission0126_10_Conv1D/submission_7_1_{q}.csv', index = False)
-
-
-
-
+        submission.to_csv(f'./dacon/submission/submission0126_12/submission_6_1_{q}.csv', index = False)  
 
 
 loss_mean = sum(loss_list) / len(loss_list) # 9개 loss 평균
 print('loss_mean : ', loss_mean)  
 
-
-
-
 # to csv
-submission.to_csv('./dacon/submission/submission0126_10_Conv1D/submission_7_2.csv', index = False)  # score :1.9498123625
+submission.to_csv('./dacon/submission/submission0126_12/submission_6_2.csv', index = False)  # score :1.93339
 
 
 # submission.to_csv('./dacon/submission/unite_submission_7days.csv', index=True, encoding='cp949')
 # submission.to_csv('./dacon/submission/unite_submission_1day.csv', index=True, encoding='cp949')
 # submission.to_csv('./dacon/submission/unite_submission_1day_analysis1.csv', index=False, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6.csv', index=False, encoding='cp949')        # score :1.93339
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6_0.7.csv', index=False, encoding='cp949')    # score :2.4791912422
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6_GHI.csv', index=False, encoding='cp949')    # score :3.4142240883
-# submission.to_csv('./dacon/submission/unite_submission_quantile.csv', index=False, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_addmodel.csv', index=False, encoding='cp949')         #score :1.9498123625
-submission.to_csv('./dacon/submission/unite_submission_10_Conv1D.csv', index=False, encoding='cp949')         #score :
+# submission.to_csv('./dacon/submission/unite_submission_30minute_6.csv', index=False, encoding='cp949')
+submission.to_csv('./dacon/submission/unite_submission_12.csv', index=False, encoding='cp949')
 
-#======================================================================loss 시각화 
-import matplotlib.pyplot as plt
 
-plt.figure(figsize=(10,6))      
-
-for i in range(9):
-    plt.subplot(3,3,(i+1))  #2행 1열중 첫번째
-    plt.plot(hist_list[i].history['loss'], marker='.', c='red', label='loss')
-    plt.plot(hist_list[i].history['val_loss'], marker='.', c='blue', label='val_loss')
-    plt.grid()
-
-    # plt.title('손실비용')
-    plt.title('Cost Loss')
-    plt.ylabel('loss')
-    plt.xlabel('epochs')
-    plt.legend(loc='upper right')
-
-plt.show()
-#=========================================================================
 
 '''
-loss_mean :  2.0136357810762195
+loss_mean :  2.9570015337732105
 '''

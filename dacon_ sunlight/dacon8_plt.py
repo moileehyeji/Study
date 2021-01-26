@@ -9,13 +9,25 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
 from pandas import DataFrame
 
-pred = pd.read_csv('./dacon/submission/unite_submission_add_column2.csv')
+pred = pd.read_csv('./dacon/submission/unite_submission_11.csv')
+
+
+# pred = pd.read_csv('./dacon/submission/unite_submission_10_Conv1D.csv')
+# pred = pd.read_csv('./dacon/submission/unite_submission_10_Dense.csv')
+
+
+# pred = pd.read_csv('./dacon/submission/unite_submission_add_column4.csv')
+# pred = pd.read_csv('./dacon/submission/unite_submission_add_column3.csv')
+# pred = pd.read_csv('./dacon/submission/unite_submission_add_column2.csv')
 # pred = pd.read_csv('./dacon/submission/unite_submission_add_column.csv')
 
 
 # pred = pd.read_csv('./dacon/submission/[submit0125(2)]unite_submission_addmodel.csv')
 # pred = pd.read_csv('./dacon/submission/[submit0125(3)]unite_submission_td.csv')
 # pred = pd.read_csv('./dacon/submission/[sumit]0.26(1)unite_submission_td_addmodel2.csv')
+
+# pred = pd.read_csv('./dacon/submission/unite_submission_30minute_6_GHI.csv')
+
 
 
 ranges = 672        # 7일치로 보겠음
@@ -45,10 +57,41 @@ plt.plot(hours, q_06, color='#aacc00')
 plt.plot(hours, q_07, color='#cc00aa')
 plt.plot(hours, q_08, color='#000000')
 plt.plot(hours, q_09, color='blue')
-# plt.title('[submit0125(2)]unite_submission_addmodel')
+# plt.title('[submit0125(2)]unite_submission_addmodel(1.9498123625)')
 # plt.title('unite_submission_add_column')
-plt.title('unite_submission_add_column2')
+# plt.title('unite_submission_add_column2')
+# plt.title('unite_submission_add_column3')
+# plt.title('unite_submission_add_column4')
+# plt.title('unite_submission_30minute_6_GHI(3.4142240883)')
+# plt.title('unite_submission_10_Dense')
+# plt.title('unite_submission_10_Conv1D')
+plt.title('unite_submission_11')
+
+
 
 plt.grid()
 plt.legend()
 plt.show()
+
+
+'''
+#======================================================================loss 시각화 
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10,6))      
+
+for i in range(9):
+    plt.subplot(3,3,(i+1))  #2행 1열중 첫번째
+    plt.plot(hist_list[i].history['loss'], marker='.', c='red', label='loss')
+    plt.plot(hist_list[i].history['val_loss'], marker='.', c='blue', label='val_loss')
+    plt.grid()
+
+    # plt.title('손실비용')
+    plt.title('Cost Loss')
+    plt.ylabel('loss')
+    plt.xlabel('epochs')
+    plt.legend(loc='upper right')
+
+plt.show()
+#=========================================================================
+'''

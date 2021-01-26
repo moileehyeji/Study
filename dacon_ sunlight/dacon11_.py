@@ -376,6 +376,24 @@ for q in quantiles :
 loss_mean = sum(loss_list) / len(loss_list) # 9개 loss 평균
 print('loss_mean : ', loss_mean)  
 
+
+
+# to csv
+submission.to_csv('./dacon/submission/submission0126_11/submission_7_2.csv', index = False)  # score :1.9498123625
+
+
+# submission.to_csv('./dacon/submission/unite_submission_7days.csv', index=True, encoding='cp949')
+# submission.to_csv('./dacon/submission/unite_submission_1day.csv', index=True, encoding='cp949')
+# submission.to_csv('./dacon/submission/unite_submission_1day_analysis1.csv', index=False, encoding='cp949')
+# submission.to_csv('./dacon/submission/unite_submission_30minute_6.csv', index=False, encoding='cp949')        # score :1.93339
+# submission.to_csv('./dacon/submission/unite_submission_30minute_6_0.7.csv', index=False, encoding='cp949')    # score :2.4791912422
+# submission.to_csv('./dacon/submission/unite_submission_30minute_6_GHI.csv', index=False, encoding='cp949')    # score :3.4142240883
+# submission.to_csv('./dacon/submission/unite_submission_quantile.csv', index=False, encoding='cp949')
+# submission.to_csv('./dacon/submission/unite_submission_addmodel.csv', index=False, encoding='cp949')         #score :1.9498123625
+# submission.to_csv('./dacon/submission/unite_submission_10_Conv1D.csv', index=False, encoding='cp949')        #score :1.9589343851
+# submission.to_csv('./dacon/submission/unite_submission_10_Dense.csv', index=False, encoding='cp949')         #score :
+submission.to_csv('./dacon/submission/unite_submission_11.csv', index=False, encoding='cp949')         #score :
+
 #======================================================================loss 시각화 
 import matplotlib.pyplot as plt
 
@@ -395,24 +413,6 @@ for i in range(9):
 
 plt.show()
 #=========================================================================
-
-# to csv
-submission.to_csv('./dacon/submission/submission0126_11/submission_7_2.csv', index = False)  # score :1.9498123625
-
-
-# submission.to_csv('./dacon/submission/unite_submission_7days.csv', index=True, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_1day.csv', index=True, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_1day_analysis1.csv', index=False, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6.csv', index=False, encoding='cp949')        # score :1.93339
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6_0.7.csv', index=False, encoding='cp949')    # score :2.4791912422
-# submission.to_csv('./dacon/submission/unite_submission_30minute_6_GHI.csv', index=False, encoding='cp949')    # score :3.4142240883
-# submission.to_csv('./dacon/submission/unite_submission_quantile.csv', index=False, encoding='cp949')
-# submission.to_csv('./dacon/submission/unite_submission_addmodel.csv', index=False, encoding='cp949')         #score :1.9498123625
-# submission.to_csv('./dacon/submission/unite_submission_10_Conv1D.csv', index=False, encoding='cp949')        #score :1.9589343851
-# submission.to_csv('./dacon/submission/unite_submission_10_Dense.csv', index=False, encoding='cp949')         #score :
-submission.to_csv('./dacon/submission/unite_submission_11.csv', index=False, encoding='cp949')         #score :
-
-
 
 '''
 loss_mean :  2.008448282877604
