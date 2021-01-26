@@ -204,8 +204,8 @@ def train_data(x_train, x_test, x_val, y_train, y_test, y_val, X_test):
     
     loss_list = np.array(loss_list)
     loss_list = loss_list.reshape(9,-1)
-    loss_list[:,0] = np.mean(loss_list[:,0])
-    loss_list[:,1] = np.mean(loss_list[:,1])
+    # loss_list[:,0] = np.mean(loss_list[:,0])
+    # loss_list[:,1] = np.mean(loss_list[:,1])
 
     pred_list = np.array(pred_list)
     pred_list = pred_list.reshape(3888,-1)
