@@ -36,7 +36,8 @@ print(y.shape)  # (150,)
 # n등분 설정
 kfold = KFold(n_splits=5, shuffle=False) 
 
-print(x)
+# ================================================================================================KFold.split
+# split(X [, y, 그룹])  : 데이터를 학습 및 테스트 세트로 분할하는 인덱스를 생성
 
 for train_index, test_index in kfold.split(x):
     print('================================================================================')
@@ -64,14 +65,26 @@ for train_index, test_index in kfold.split(x):
     # print('y_train.shape : \n', y_train)              
     # print('y_test.shape  : \n', y_test)
     # print('y_val.shape   : \n', y_val)
-           
+
+    
+    # 훈련마다 평가
+    #2. 모델구성
+    model = SVC()
+
+    scores = cross_val_score(model, x_train, y_train, cv=kfold)     
+    print('scores : ', scores)    #가장 좋은 결과 :  scores :  [1. 1. 1. 1. 1.]                     
+    
 
 
 #2. 모델구성
-model = LinearSVC()
+    # model = SVC()
 
-scores = cross_val_score(model, x_train, y_train, cv=kfold)     # train : test : validation(x_train 1/5)
-print('scores : ', scores)                                      # scores : [0.9        0.94736842 1.         0.94736842 0.94736842]
+    scores = cross_val_score(model, x_train, y_train, cv=kfold)     # train : test : validation(x_train 1/5)
+    print('scores : ', scores)                                      # scores :  [1. 1. 1. 1. 1.]
+
+           
+
+
 
 
 '''
