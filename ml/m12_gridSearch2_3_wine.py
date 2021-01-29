@@ -80,6 +80,12 @@ print(f"{finish_time - start_time:.2f}초 걸렸습니다")   # 31.17초 걸렸�
                      
 
 '''
-Tensorflow                 :
+1. Tensorflow                 :
 Dense모델 acc :  1.0
+
+
+2. RandomForest모델 :
+============================================GridSearchCV
+최종 정답률 :  1.0
+31.17초 걸렸습니다
 '''

@@ -80,6 +80,12 @@ print(f"{finish_time - start_time:.2f}초 걸렸습니다")       # 78.81초 걸
 
 
 '''
-Tensorflow                 :
+1. Tensorflow                 :
 Dense(Dropout)모델 acc :  0.9912280440330505
+
+
+2. RandomForest모델 :
+============================================GridSearchCV
+최종 정답률 :  0.9649122807017544
+78.81초 걸렸습니다
 '''

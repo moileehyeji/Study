@@ -38,25 +38,6 @@ model = LinearSVC()
 scores = cross_val_score(model, x, y, cv=kfold)     # train : test(x, 1/5)  ,내부적으로 fit,  cv = 5 가능(shuffle이 없기 때문에 따로 정의), 분류:acc, 회귀:r2
 print('scores : ', scores)                          # scores :  [0.96666667 0.96666667 1.         0.9        0.96666667]
 
-'''
-#3. 훈련
-model.fit(x_train, y_train)
-
-#4.평가, 예측
-y_pred = model.predict(x_test)
-print('예측값 : ', y_pred[:5])
-print('실제값 : ', y_test[:5])
-
-result = model.score(x_test, y_test)
-print('model.score     :', result)
-
-# accuracy_score = accuracy_score(y_test, y_pred)  
-# print('accuracy_score  :', accuracy_score)      #TypeError: 'numpy.float64' object is not callable
-print('accuracy_score  :', accuracy_score(y_test, y_pred))
-
-        
-print('\n')  
-'''
 
 '''
 Tensorflow                 :    이게 이겨야 돼

@@ -75,7 +75,12 @@ print(aaa)                                             # 0.37948266914013495
 print(f"{finish_time - start_time:.2f}초 걸렸습니다")   # 79.99초 걸렸습니다
 
 '''
-Tensorflow            :
+1. Tensorflow            :
 Conv1D모델 r2 :  0.6436679568820876
 
+
+2. RandomForest모델 :
+============================================GridSearchCV
+최종 정답률 :  0.37948266914013495
+79.99초 걸렸습니다
 '''

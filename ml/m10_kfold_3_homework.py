@@ -68,14 +68,16 @@ for train_index, test_index in kfold.split(x):
 
     
     # 훈련마다 평가
+    # 가장 좋은 결과 뽑고싶으면 GridSerchCV, RandomSerchCV 사용
     #2. 모델구성
     model = SVC()
 
     scores = cross_val_score(model, x_train, y_train, cv=kfold)     
-    print('scores : ', scores)    #가장 좋은 결과 :  scores :  [1. 1. 1. 1. 1.]                     
+    print('scores : ', scores)    #가장 좋은 결과 :  scores :  [1. 1. 1. 1. 1.]    
+                     
     
 
-
+# 가장 좋은 결과 뽑고싶으면 GridSerchCV, RandomSerchCV 사용
 #2. 모델구성
     # model = SVC()
 

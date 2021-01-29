@@ -80,6 +80,12 @@ print(aaa)                                               # 1.0
 print(f"{finish_time - start_time:.2f}초 걸렸습니다")     # 74.97초 걸렸습니다
 
 '''
-Tensorflow                 :    이게 이겨야 돼
+1. Tensorflow                 :    이게 이겨야 돼
 Dense, LSTM, Conv1D 모델 acc :  1.0
+
+
+2. RandomForest모델 :
+============================================GridSearchCV
+최종 정답률 :  1.0
+74.97초 걸렸습니다
 '''
