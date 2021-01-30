@@ -3,7 +3,6 @@
 # 실습
 # 피쳐임포턴스가 25% 아래 컬럼들을 제거하여 데이터셋 재구성 후
 # RandomForestClassifier 모델을 돌려서 acc확인
-# 동일
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -16,37 +15,24 @@ import numpy as np
 # 1. 데이터
 dataset = load_breast_cancer()
 
-# ===============================================================피쳐임포턴스가 0안 컬럼들을 제거
-
-df = pd.DataFrame(data=dataset.data, columns=dataset.feature_names)
-# df['target'] = pd.Series(dataset.target)
-
-# print(df.shape) #(569, 30)
-
-df = df.iloc[:,[0,1,2,3,5,6,7,10,12,13,20,21,22,23,24,26,27,28]]
-
-
-dataset.data = df.to_numpy()
-# ===============================================================
-
 x_train, x_test, y_train, y_test = train_test_split(dataset.data, dataset.target, test_size=0.2, random_state=44)
 
 # 2. 모델구성
-# model = DecisionTreeClassifier(max_depth=4)
-model = RandomForestClassifier()
+# model1 = DecisionTreeClassifier(max_depth=4)
+model1 = RandomForestClassifier()
 
 # 3. 훈련
-model.fit(x_train, y_train)
+model1.fit(x_train, y_train)
 
 # 4. 평가, 예측
-acc = model.score(x_test, y_test)
+acc = model1.score(x_test, y_test)
 
 # ==========================================================================feature_importances_
 # feature_importances_ : 컬럼의 중요도 표시
 # 해당모델의 중요도를 표시한것으로 모델마다 다르다.
-print(model.feature_importances_)      
-
-print('acc : ', acc)                  
+print('컬럼 정리 전 FI  : ', model1.feature_importances_)      
+print('컬럼 정리 전 acc : ', acc)  
+print(dataset.data.shape)                
 
 
 # 시각화
@@ -56,29 +42,76 @@ import numpy as np
 def plot_feature_importances_dataset(model):
     n_feature = dataset.data.shape[1]
     plt.barh(np.arange(n_feature), model.feature_importances_, align = 'center')    # barh : 가로 막대 그래프 , align : 정렬
-    # plt.yticks(np.arange(n_feature), dataset.feature_names)       #ValueError: The number of FixedLocator locations (6), usually from a call to set_ticks, does not match the number of ticklabels (30).
+    plt.yticks(np.arange(n_feature), dataset.feature_names)                         # y축 
     plt.title('cancer')
     plt.xlabel('Feature Importance')
     plt.ylabel('Feature')
     plt.ylim(-1, n_feature)
 
-plot_feature_importances_dataset(model)
+plot_feature_importances_dataset(model1)
+# plt.show()
+
+# ============================================================ 중요도가 0인 컬럼 정리(서영이 m21_FI_test1_iris)
+## 0인 컬럼 제거
+original = model1.feature_importances_
+data_new =[]        # 새로운 데이터형성 dataset --> data_new
+feature_names = []  # 컬럼 이름 정의 feature_names
+
+
+# for문 생성-> 중요도 낮은 컬럼 제거
+if np.any(0 == original) == True :                          # 중요도에 0 이 있으면
+    for i in range(len(original)):
+        if (original[i] > 0.) :                             # 중요도가 0 보다 큰 컬럼만 append
+            data_new.append(dataset.data[:,i])
+            feature_names.append(dataset.feature_names[i])
+else :                                                      # 중요도에 0 이 없으면
+    for i in range(len(original)):
+        if (original[i] > (original.max() * 0.25)) :          # 중요도가 하위 25프로보다 큰 컬럼만 append
+            data_new.append(dataset.data[:,i])
+            feature_names.append(dataset.feature_names[i])
+
+
+data_new = np.array(data_new)
+data_new = np.transpose(data_new)
+
+dataset.data = data_new
+dataset.feature_names = feature_names
+
+# 전처리
+x2_train,x2_test,y2_train,y2_test = train_test_split(data_new,dataset.target, train_size = 0.8, random_state = 33)
+
+#2. 모델
+# model2 = DecisionTreeClassifier(max_depth = 4)
+model2 = RandomForestClassifier()
+
+#3. 훈련
+model2.fit(x2_train, y2_train)
+
+#4. 평가 예측
+acc = model2.score(x2_test,y2_test)
+
+print('컬럼 정리 후 FI  : ', model2.feature_importances_)
+print('컬럼 정리 후 acc : ', acc)
+print(data_new.shape)                
+
+
+####### dataset -> new_data 로 변경, feature_name 부분을 feature 리스트로 변경
+plot_feature_importances_dataset(model2)
 plt.show()
 
+
 '''
-피쳐임포턴스가 25% 아래 컬럼들을 제거하여 데이터셋 재구성 전:
-[0.01863554 0.01286987 0.03963879 0.06865359 0.00905908 0.01084203
- 0.05662244 0.12657942 0.00546327 0.00605096 0.01259337 0.00484001
- 0.01739696 0.03463229 0.00427459 0.00575904 0.00785478 0.00554918
- 0.00343431 0.00410424 0.07984624 0.0226568  0.1253662  0.12865351
- 0.01190804 0.00923761 0.02268093 0.12725114 0.01042869 0.00711707]
-acc :  0.9649122807017544
-
-
-피쳐임포턴스가 25% 아래 컬럼들을 제거하여 데이터셋 재구성 후: [0,1,2,3,5,6,7,10,12,13,20,21,22,23,24,26,27,28]
-[0.05245507 0.01702452 0.02819842 0.04010401 0.01028997 0.02931114
- 0.18381968 0.00847633 0.01177515 0.01720183 0.1094365  0.02940748
- 0.15751929 0.13215814 0.02584653 0.02217959 0.11103202 0.01376434]
-acc :  0.9649122807017544
+2. RandomFrest모델 :
+컬럼 정리 전 FI  :  [0.02604947 0.01725403 0.05962949 0.03780032 0.00825135 0.01528129
+                    0.07501805 0.08328476 0.00435496 0.00635749 0.02031432 0.00615687
+                    0.00765118 0.04376177 0.00512134 0.0046758  0.01140007 0.00732979
+                    0.00327074 0.00427899 0.14537556 0.01476771 0.15375189 0.06802011
+                    0.01108553 0.01627374 0.03700081 0.08081024 0.01837657 0.00729575]
+컬럼 정리 전 acc :  0.9649122807017544
+(569, 30)
+컬럼 정리 후 FI  :  [0.06034728 0.04506332 0.20436503 0.02566116 0.15251015 0.16769284
+                    0.20731282 0.13704739]
+컬럼 정리 후 acc :  0.9210526315789473
+(569, 8)
 
 '''
