@@ -1,4 +1,4 @@
-# RandomFrest 모델
+# RandomForest 모델
 # 파이프라인 역시 25번 돌리기
 # 데이터는 diabets
 
@@ -28,12 +28,20 @@ y = dataset.target
 # n등분 설정
 kfold = KFold(n_splits=5, shuffle=False) 
 
+# parameters       
+parameters1 = [ 
+    {'mal__n_estimators':[100,200,300], 'mal__min_samples_split':[2,3,4,5], 'mal__n_jobs':[2,4]},  
+    {'mal__n_estimators':[1,100],    'mal__max_depth':[35,40,44], 'mal__min_samples_leaf':[2,4,5], 'mal__min_samples_split':[8,10], 'mal__n_jobs':[3]},
+    {'mal__n_estimators':[100,200], 'mal__min_samples_leaf':[12,24]},
+
+]
+
 # ================================================================================================KFold.split
 # split(X [, y, 그룹])  : 데이터를 학습 및 테스트 세트로 분할하는 인덱스를 생성
 scores = list()
 for train_index, test_index in kfold.split(x):
-    print('================================================================================')
-    print("TRAIN:", train_index, "\nTEST:", test_index) 
+    # print('================================================================================')
+    # print("TRAIN:", train_index, "\nTEST:", test_index) 
 
     # train : test
     x_train, x_test = x[train_index], x[test_index] 
@@ -46,24 +54,23 @@ for train_index, test_index in kfold.split(x):
         x_train, x_val = x[train_index], x[val_index] 
         y_train, y_val = y[train_index], y[val_index]
 
-        print('x_train.shape : ', x_train.shape)        # (282, 10)
-        print('x_test.shape  : ', x_test.shape)         # (89, 10)
-        print('x_val.shape   : ', x_val.shape)          # (71, 10)
+        # print('x_train.shape : ', x_train.shape)        # (282, 10)
+        # print('x_test.shape  : ', x_test.shape)         # (89, 10)
+        # print('x_val.shape   : ', x_val.shape)          # (71, 10)
 
-        print('y_train.shape : ', y_train.shape)        # (282,)
-        print('y_test.shape  : ', y_test.shape)         # (89,)
-        print('y_val.shape   : ', y_val.shape)          # (71,)
+        # print('y_train.shape : ', y_train.shape)        # (282,)
+        # print('y_test.shape  : ', y_test.shape)         # (89,)
+        # print('y_val.shape   : ', y_val.shape)          # (71,)
 
 
-        # 훈련마다 평가
-        #2. 모델구성
-        model = RandomForestRegressor()
+    # 훈련마다 평가
+    #2. 모델구성
+    model = RandomForestRegressor()
 
-        score = cross_val_score(model, x_train, y_train, cv=kfold)     
-        print('scores : ', score) 
-        scores.append(score) 
+    score = cross_val_score(model, x_train, y_train, cv=kfold)     
+    print('scores : ', score) 
+    scores.append(score) 
                            
 scores = np.array(scores)  
-print(scores.shape)     # (25, 5)                                       
-
+print(scores.shape)     # (25, 5)   
            

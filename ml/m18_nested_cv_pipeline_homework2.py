@@ -28,6 +28,44 @@ y = dataset.target
 # n등분 설정
 kfold = KFold(n_splits=5, shuffle=False) 
 
+# parameters       
+parameters1 = [ 
+    {'mal__n_estimators':[100,200,300], 'mal__min_samples_split':[2,3,4,5], 'mal__n_jobs':[2,4]},  
+    {'mal__n_estimators':[1,100],    'mal__max_depth':[35,40,44], 'mal__min_samples_leaf':[2,4,5], 'mal__min_samples_split':[8,10], 'mal__n_jobs':[3]},
+    {'mal__n_estimators':[100,200], 'mal__min_samples_leaf':[12,24]},
+
+]
+
+# ================================================================================================KFold.split
+# split(X [, y, 그룹])  : 데이터를 학습 및 테스트 세트로 분할하는 인덱스를 생성
+scores = list()
+for train_index, test_index in kfold.split(x):
+    print('================================================================================')
+    print("TRAIN:", train_index, "\nTEST:", test_index) 
+
+    # train : test
+    x_train, x_test = x[train_index], x[test_index] 
+    y_train, y_test = y[train_index], y[test_index]
+      
+    # train : test : validation
+    pipe = Pipeline([('scaler', MinMaxScaler()), ('mal', RandomForestClassifier())])
+
+    score = cross_val_score(pipe, x_train, y_train, cv=kfold)
+    print('교차검증점수 : ', score)
+
+    model = RandomizedSearchCV(pipe, parameters1, cv=kfold)
+    model.fit(x_train, y_train)
+
+    print('최적의 매개변수 : ', model.best_estimator_)
+    print('model.score    : ', model.score(x_test, y_test))
+
+    scores.append(score)
+       
+                           
+scores = np.array(scores)  
+print(scores.shape)     # (5, 5)                                       
+
+'''
 # ================================================================================================KFold.split
 # split(X [, y, 그룹])  : 데이터를 학습 및 테스트 세트로 분할하는 인덱스를 생성
 scores = list()
@@ -66,4 +104,4 @@ for train_index, test_index in kfold.split(x):
 scores = np.array(scores)  
 print(scores.shape)     # (25, 5)                                       
 
-           
+'''         
