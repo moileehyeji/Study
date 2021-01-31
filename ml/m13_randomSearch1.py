@@ -64,6 +64,9 @@ print('최종 정답률 : ', accuracy_score(y_test, y_pred))   # 최종 정답�
 aaa = model.score(x_test, y_test)
 print(aaa)                                               # 1.0
 
+best_esti_model = model.best_estimator_
+print('최적의 매개변수 모델 : ',best_esti_model.score(x_test, y_test) ) #최적의 매개변수 모델 :  1.0
+
 #   =========================================================================================================
 
 # scores = cross_val_score(model, x, y, cv=kfold)    
