@@ -23,7 +23,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 from sklearn.metrics import accuracy_score, r2_score
-from xgboost import XGBClassifier, XGBRFRegressor
+from xgboost import XGBClassifier, XGBRegressor
 
 # 1. 데이터
 dataset = load_boston()
@@ -52,13 +52,13 @@ parameters = [
 #2. 모델구성
 
 # GridSearchCV : 이 자체가 모델
-model = RandomizedSearchCV(XGBRFRegressor(use_label_encoder=False), parameters, cv=kfold)       #(모델, 파라미터, kfold)   
+model = RandomizedSearchCV(XGBRegressor(use_label_encoder=False), parameters, cv=kfold)       #(모델, 파라미터, kfold)   
 
 #3. 훈련
 # 훈련시간
 start_time = time()
 
-model.fit(x_train, y_train, eval_metric='logloss')
+model.fit(x_train, y_train, eval_metric='logloss', verbose = True, eval_set=[(x_train, y_train), (x_test, y_test)])
 
 finish_time = time()
 
@@ -90,17 +90,29 @@ CNN모델 r2 :  0.9462232137123261
 
 3. XGB 모델
 ============================================GridSearchCV
-최적의 매개변수 :  XGBRFRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=0.7,
-               colsample_bytree=1, gamma=0, gpu_id=-1, importance_type='gain',
-               interaction_constraints='', learning_rate=0.5, max_delta_step=0,
-               max_depth=6, min_child_weight=1, missing=nan,
-               monotone_constraints='()', n_estimators=110, n_jobs=8,
-               num_parallel_tree=110, objective='reg:squarederror',
-               random_state=0, reg_alpha=0, scale_pos_weight=1,
-               tree_method='exact', use_label_encoder=False,
-               validate_parameters=1, verbosity=None)
-최종 정답률 :  -0.6364774209504585
--0.6364774209504585
-70.15초 걸렸습니다
+최적의 매개변수 :  XGBRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=0.6,
+             colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.1, max_delta_step=0, max_depth=4,
+             min_child_weight=1, missing=nan, monotone_constraints='()',
+             n_estimators=110, n_jobs=8, num_parallel_tree=1, random_state=0,
+             reg_alpha=0, reg_lambda=1, scale_pos_weight=1, subsample=1,
+             tree_method='exact', use_label_encoder=False,
+             validate_parameters=1, verbosity=None)
+최종 정답률 :  0.8881736364678464
+0.8881736364678464
+111.91초 걸렸습니다
 ============================================RandomizedSearchCV
+최적의 매개변수 :  XGBRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.1, max_delta_step=0, max_depth=5,
+             min_child_weight=1, missing=nan, monotone_constraints='()',
+             n_estimators=100, n_jobs=8, num_parallel_tree=1, random_state=0,
+             reg_alpha=0, reg_lambda=1, scale_pos_weight=1, subsample=1,
+             tree_method='exact', use_label_encoder=False,
+             validate_parameters=1, verbosity=None)
+최종 정답률 :  0.8867203122457384
+0.8867203122457384
+3.91초 걸렸습니다
 '''

@@ -23,7 +23,7 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, r2_score
-from xgboost import XGBClassifier, XGBRFRegressor
+from xgboost import XGBClassifier, XGBRegressor
 
 # 1. 데이터
 dataset = load_diabetes()
@@ -52,13 +52,13 @@ parameters = [
 #2. 모델구성
 
 # GridSearchCV : 이 자체가 모델
-model = GridSearchCV(XGBRFRegressor(use_label_encoder=False), parameters, cv=kfold)       #(모델, 파라미터, kfold)   
+model = GridSearchCV(XGBRegressor(use_label_encoder=False), parameters, cv=kfold)       #(모델, 파라미터, kfold)   
 
 #3. 훈련
 # 훈련시간
 start_time = time()
 
-model.fit(x_train, y_train, eval_metric='logloss')
+model.fit(x_train, y_train, eval_metric='logloss', verbose = True, eval_set=[(x_train, y_train), (x_test, y_test)])
 
 finish_time = time()
 
@@ -91,4 +91,16 @@ Conv1D모델 r2 :  0.6436679568820876
 
 3. XGB 모델
 ============================================GridSearchCV
+최적의 매개변수 :  XGBRegressor(base_score=0.5, booster='gbtree', colsample_bylevel=1,
+             colsample_bynode=1, colsample_bytree=1, gamma=0, gpu_id=-1,
+             importance_type='gain', interaction_constraints='',
+             learning_rate=0.01, max_delta_step=0, max_depth=4,
+             min_child_weight=1, missing=nan, monotone_constraints='()',
+             n_estimators=300, n_jobs=8, num_parallel_tree=1, random_state=0,
+             reg_alpha=0, reg_lambda=1, scale_pos_weight=1, subsample=1,
+             tree_method='exact', use_label_encoder=False,
+             validate_parameters=1, verbosity=None)
+최종 정답률 :  0.3674122540043452
+0.3674122540043452
+109.19초 걸렸습니다
 '''
