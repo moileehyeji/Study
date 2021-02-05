@@ -1,18 +1,18 @@
 import numpy as np
 import pandas as pd
 import os
-import cv2
 import shutil
 import glob
 import tensorflow as tf
 import matplotlib.pyplot as plt
+# from cv2 import cv2
+import cv2
 from keras.preprocessing.image import ImageDataGenerator
 from numpy import expand_dims
 from sklearn.model_selection import StratifiedKFold
-from keras import Sequential
-from keras.layers import *
-from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from tensorflow.keras.layers import Dense, LSTM, Conv2D, MaxPooling2D, Flatten, Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.layers import Dense, LSTM, Conv2D, MaxPooling2D, Flatten, Dropout, BatchNormalization
 from keras.optimizers import Adam
 from collections import Counter
 
@@ -23,28 +23,29 @@ submission = pd.read_csv('./dacon/computer/data/submission.csv')
 
 # train 이미지들과 test 이미지들을 저장해놓을 폴더를 생성합니다.
 path_img = './dacon/computer/data/img'
-# os.mkdir(f'{path}images_train')
-# os.mkdir(f'{path}images_train/0')
-# os.mkdir(f'{path}images_train/1')
-# os.mkdir(f'{path}images_train/2')
-# os.mkdir(f'{path}images_train/3')
-# os.mkdir(f'{path}images_train/4')
-# os.mkdir(f'{path}images_train/5')
-# os.mkdir(f'{path}images_train/6')
-# os.mkdir(f'{path}images_train/7')
-# os.mkdir(f'{path}images_train/8')
-# os.mkdir(f'{path}images_train/9')
-# os.mkdir(f'{path}images_test')
+# os.mkdir(f'{path_img}images_train')
+# os.mkdir(f'{path_img}images_train/0')
+# os.mkdir(f'{path_img}images_train/1')
+# os.mkdir(f'{path_img}images_train/2')
+# os.mkdir(f'{path_img}images_train/3')
+# os.mkdir(f'{path_img}images_train/4')
+# os.mkdir(f'{path_img}images_train/5')
+# os.mkdir(f'{path_img}images_train/6')
+# os.mkdir(f'{path_img}images_train/7')
+# os.mkdir(f'{path_img}images_train/8')
+# os.mkdir(f'{path_img}images_train/9')
+# os.mkdir(f'{path_img}images_test')
 
 # for idx in range(len(csv_train)) :
 #     img = csv_train.loc[idx, '0':].values.reshape(28, 28).astype(int)
 #     digit = csv_train.loc[idx, 'digit']
-    # cv2.imwrite(f'{path}/images_train/{digit}/{csv_train["id"][idx]}.png', img)
+#     cv2.imwrite(f'{path_img}/images_train/{digit}/{csv_train["id"][idx]}.png', img)
 
 
 # for idx in range(len(csv_test)) :
 #     img = csv_test.loc[idx, '0':].values.reshape(28, 28).astype(int)
-#     cv2.imwrite(f'{path}/images_test/{csv_test["id"][idx]}.png', img)
+#     cv2.imwrite(f'{path_img}/images_test/{csv_test["id"][idx]}.png', img)
+
 
 
 # 모델구성
@@ -55,39 +56,6 @@ path_img = './dacon/computer/data/img'
 # InceptionResNetV2 : 사전훈련된 convolution 신경망
 # GlobalAveragePooling2D : 뒤로 갈 수록 추상화되고 함축되는 정보가 feature에 담기게 되는데, 
 #                           결과적으로 마지막  feature를 분류기로 사용(https://jetsonaicar.tistory.com/16)     
-'''                      
-model_1 = tf.keras.applications.InceptionResNetV2(weights=None, include_top=True, input_shape=(224, 224, 1), classes=10)
-
-model_2 = tf.keras.Sequential([
-                               tf.keras.applications.InceptionV3(weights=None, include_top=False, input_shape=(224, 224, 1)),
-                               tf.keras.layers.GlobalAveragePooling2D(),
-                               tf.keras.layers.Dense(1024, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(512, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(256, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(10, kernel_initializer='he_normal', activation='softmax', name='predictions')
-                               ])
-
-model_3 = tf.keras.Sequential([
-                               tf.keras.applications.Xception(weights=None, include_top=False, input_shape=(224, 224, 1)),
-                               tf.keras.layers.GlobalAveragePooling2D(),
-                               tf.keras.layers.Dense(1024, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(512, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(256, kernel_initializer='he_normal'),
-                               tf.keras.layers.BatchNormalization(),
-                               tf.keras.layers.Activation('relu'),
-                               tf.keras.layers.Dense(10, kernel_initializer='he_normal', activation='softmax', name='predictions')
-                               ])'''
-
 def modeling():
     model = Sequential()
     model.add(Conv2D(16,(3,3),activation='relu',input_shape=(224, 224, 1),padding='same'))
@@ -129,7 +97,7 @@ model = modeling(
 
 )
 # 3. 컴파일, 훈련
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.001), metrics=['accuracy'])
 
 datagen = ImageDataGenerator(rescale=1./255, validation_split=0.2,
                              rotation_range=10,
@@ -141,13 +109,13 @@ val_generator = datagen.flow_from_directory(f'{path_img}/images_train', target_s
 
 
 path_h5 = './dacon/computer/h5'
-checkpoint_1 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline6_model_1.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
-checkpoint_2 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline6_model_2.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
-checkpoint_3 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline6_model_3.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
+checkpoint_1 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline1,6_model_1.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
+checkpoint_2 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline1,6_model_2.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
+checkpoint_3 = tf.keras.callbacks.ModelCheckpoint(f'{path_h5}/baseline1,6_model_3.h5', monitor='val_accuracy', save_best_only=True, verbose=1)
 
-lr = ReduceLROnPlateau(monitor='val_accuracy', patience=10, factor=0.3, verbose=1) 
+lr = ReduceLROnPlateau(monitor='val_accuracy', patience=10, factor=0.2, verbose=1) 
 
-model.fit_generator(train_generator, epochs=500, validation_data=val_generator, callbacks=[checkpoint_1, lr])
+model.fit_generator(train_generator, epochs=200, validation_data=val_generator, callbacks=[checkpoint_1, lr])
 
 
 # 4. 평가, 예측
@@ -183,4 +151,41 @@ submission["digit"] = predict_1
 
 
 path_submit = './dacon/computer'
-submission.to_csv(f'{path_submit}/baseline6.csv', index=False)
+submission.to_csv(f'{path_submit}/baseline1,6.csv', index=False)
+
+
+
+
+
+'''                  
+model_1 = tf.keras.applications.InceptionResNetV2(weights=None, include_top=True, input_shape=(224, 224, 1), classes=10)
+
+model_2 = tf.keras.Sequential([
+                               tf.keras.applications.InceptionV3(weights=None, include_top=False, input_shape=(224, 224, 1)),
+                               tf.keras.layers.GlobalAveragePooling2D(),
+                               tf.keras.layers.Dense(1024, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(512, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(256, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(10, kernel_initializer='he_normal', activation='softmax', name='predictions')
+                               ])
+
+model_3 = tf.keras.Sequential([
+                               tf.keras.applications.Xception(weights=None, include_top=False, input_shape=(224, 224, 1)),
+                               tf.keras.layers.GlobalAveragePooling2D(),
+                               tf.keras.layers.Dense(1024, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(512, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(256, kernel_initializer='he_normal'),
+                               tf.keras.layers.BatchNormalization(),
+                               tf.keras.layers.Activation('relu'),
+                               tf.keras.layers.Dense(10, kernel_initializer='he_normal', activation='softmax', name='predictions')
+                               ])'''
