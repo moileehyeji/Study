@@ -144,6 +144,8 @@ x_test = x_test/255
 x_test = x_test.astype('float32')
 
 # ImageDataGenerator
+# idg = ImageDataGenerator(height_shift_range=(-1,1),width_shift_range=(-1,1))
+# idg2 = ImageDataGenerator()
 datagen = ImageDataGenerator(
         # featurewise_center=True,
         # featurewise_std_normalization=True,
@@ -172,7 +174,7 @@ for train_index, valid_index in skf.split(x_train, y_train) :
 
     early = EarlyStopping(monitor='val_acc', patience=20, mode= 'auto')
     lr = ReduceLROnPlateau(monitor='val_acc', patience=5, factor=0.9, verbose=1) 
-    modelpath = './dacon/computer/modelcheckpoint/comv1_7_cnn_{epoch:02d}_{val_acc:.4f}.hdf5'
+    modelpath = './dacon/computer/modelcheckpoint/comv1_7_cnn8_base_2{epoch:02d}_{val_acc:.4f}.hdf5'
     cp = ModelCheckpoint(filepath=modelpath, monitor='val_acc', save_best_only=True, mode='auto')
 
     X_train = x_train[train_index]
@@ -186,7 +188,11 @@ for train_index, valid_index in skf.split(x_train, y_train) :
 
     model = modeling()
 
-    learning_history  = model.fit_generator(train_generator,epochs=epochs, validation_data=valid_generator,callbacks=[early, lr, cp])
+    # learning_history  = model.fit_generator(train_generator,epochs=epochs, validation_data=valid_generator,callbacks=[early, lr, cp])
+    learning_history  = model.fit(train_generator, epochs=epochs, validation_data=valid_generator, callbacks=[early, lr, cp])
+
+    model.save_weights('./dacon/computer/h5/baseline_weight.h5')
+    model.save('./dacon/computer/h5/baseline_model.h5')
     
     result += model.predict_generator(test_generator,verbose=True)/40
     
@@ -204,6 +210,16 @@ submit.to_csv('./dacon/computer/comv7_8_base2_.csv',index=False)
 
 print('val_acc_max      : ', val_acc_max)
 print('val_acc_max 평균 :', np.mean(val_acc_max))
+
+'''
+val_acc_max      :  [0.8269230723381042, 0.9038461446762085, 0.9038461446762085, 0.9230769276618958, 0.9807692170143127, 0.8653846383094788, 0.942307710647583, 
+                    0.8653846383094788, 0.9019607901573181, 0.8823529481887817, 0.9607843160629272, 0.9411764740943909, 0.9411764740943909, 0.9411764740943909, 
+                    0.9019607901573181, 0.8823529481887817, 0.9607843160629272, 0.8823529481887817, 0.9019607901573181, 0.9019607901573181, 0.9019607901573181, 
+                    0.9411764740943909, 0.8823529481887817, 0.8823529481887817, 0.9019607901573181, 0.8627451062202454, 0.8627451062202454, 0.9607843160629272, 
+                    0.9215686321258545, 0.9019607901573181, 0.9019607901573181, 0.9411764740943909, 0.8627451062202454, 0.9607843160629272, 0.9607843160629272, 
+                    0.8627451062202454, 0.8235294222831726, 0.9607843160629272, 0.9607843160629272, 0.8823529481887817]
+val_acc_max 평균 : 0.908719839155674
+'''
 
 
 ''' 

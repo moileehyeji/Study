@@ -7,6 +7,7 @@ from sklearn.model_selection import StratifiedKFold
 from keras import Sequential
 from keras.layers import *
 from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.layers import Dense, LSTM, Conv2D, MaxPooling2D, Flatten, Dropout
 from keras.optimizers import Adam
 
 # 1. 데이터
@@ -14,34 +15,18 @@ train = pd.read_csv('./dacon/computer/data/train.csv')
 test = pd.read_csv('./dacon/computer/data/test.csv')
 sub = pd.read_csv('./dacon/computer/data/submission.csv')
 
-# display(train,test,sub)     # IPython 쉘 환경에서 pandas dataframe을 테이블 형식으로 표현
-
 #distribution of label('digit') 
-train['digit'].value_counts()   # 유일한 값별 개수 세기
-'''
-2    233
-5    225
-6    212
-4    207
-3    205
-1    202
-9    197
-7    194
-0    191
-8    182
-'''
+train['digit'].value_counts()
 
 # drop columns
-train2 = train.drop(['id','digit','letter'], axis = 1)
-test2 = test.drop(['id','letter'], axis = 1)
+train2 = train.drop(['id','digit','letter'],1)
+test2 = test.drop(['id','letter'],1)
 
 # convert pandas dataframe to numpy array
 train2 = train2.values
 test2 = test2.values
 
-# plt.imshow(train2[100].reshape(28,28))    # D
-
-# reshape   : Conv2D
+# reshape
 train2 = train2.reshape(-1,28,28,1)
 test2 = test2.reshape(-1,28,28,1)
 
@@ -50,12 +35,10 @@ train2 = train2/255.0
 test2 = test2/255.0
 
 # ImageDatagenerator & data augmentation
-# 데이터 약2000행이라는 부족한 데이터를 증폭시킨다.
 idg = ImageDataGenerator(height_shift_range=(-1,1),width_shift_range=(-1,1))
 idg2 = ImageDataGenerator()
 
 # show augmented image data
-'''
 sample_data = train2[100].copy()
 sample = expand_dims(sample_data,0)
 sample_datagen = ImageDataGenerator(height_shift_range=(-1,1), width_shift_range=(-1,1))
@@ -68,7 +51,6 @@ for i in range(9) :
     sample_batch = sample_generator.next()
     sample_image=sample_batch[0]
     plt.imshow(sample_image.reshape(28,28))
-'''
 
 # cross validation
 skf = StratifiedKFold(n_splits=40, random_state=42, shuffle=True)
@@ -77,12 +59,13 @@ reLR = ReduceLROnPlateau(patience=100,verbose=1,factor=0.5) #learning rate sched
 es = EarlyStopping(patience=160, verbose=1)
 
 val_loss_min = []
+val_acc_max = []
 result = 0
 nth = 0
 
 for train_index, valid_index in skf.split(train2,train['digit']) :
     
-    mc = ModelCheckpoint('best_cvision.h5',save_best_only=True, verbose=1)
+    # mc = ModelCheckpoint('./dacon/computer/modelcheckpoint/best_cvision_{epoch:02d}_{val_acc:.4f}.hdf5',save_best_only=True, verbose=1)
     
     x_train = train2[train_index]
     x_valid = train2[valid_index]    
@@ -130,25 +113,28 @@ for train_index, valid_index in skf.split(train2,train['digit']) :
     
     model.compile(loss='sparse_categorical_crossentropy', optimizer=Adam(lr=0.002,epsilon=None),metrics=['acc'])
     
-    learning_history = model.fit_generator(train_generator,epochs=2000, validation_data=valid_generator, callbacks=[es,mc,reLR])
+    learning_history = model.fit_generator(train_generator,epochs=2000, validation_data=valid_generator, callbacks=[es,reLR])
     
     # predict
-    model.load_weights('best_cvision.h5')
+    # model.load_weights('./dacon/computer/h5/best_cvision.h5')
     result += model.predict_generator(test_generator,verbose=True)/40
     
     # save val_loss
     hist = pd.DataFrame(learning_history.history)
     val_loss_min.append(hist['val_loss'].min())
+    val_acc_max.append(hist['val_acc'].max())
     
     nth += 1
     print(nth, '번째 학습을 완료했습니다.')
-
-
-# display(val_loss_min, np.mean(val_loss_min))
-
-# model.summary()
 
 # Submission
 sub['digit'] = result.argmax(1)
 sub.to_csv('./dacon/computer/baseline.csv',index=False)
 
+print(np.mean(val_loss_min))
+print(np.mean(val_acc_max))
+
+'''
+0.13747928594821132
+0.9663367286324501
+'''

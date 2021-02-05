@@ -77,7 +77,7 @@ x_train = x_train/255.
 x_train = x_train.astype('float32')
 
 y = train['digit']  
-y_train = to_categorical(y)                                 
+# y_train = to_categorical(y)                                 
 y_train = np.zeros((len(y), len(y.unique())))  # 총 행의수 , 10(0~9)
 for i, digit in enumerate(y):   # y전처리 for문
     y_train[i, digit] = 1       # (2048, 10)
@@ -102,8 +102,8 @@ valgen = ImageDataGenerator()
 
 # cross validation
 n_splits = 40
-# skf = StratifiedKFold(n_splits=n_splits, random_state=42, shuffle=True)
-skf = RepeatedKFold(n_splits=5, n_repeats=10, random_state=40)
+skf = StratifiedKFold(n_splits=n_splits, random_state=42, shuffle=True)
+# skf = RepeatedKFold(n_splits=5, n_repeats=10, random_state=40)
 
 val_acc_max = []
 result = 0
@@ -112,11 +112,11 @@ Fold = 1
 
 for train_index, valid_index in skf.split(x_train) :
 
-    opti = Nadam(learning_rate=0.001)
+    opti = Nadam(learning_rate=0.002)
     epochs = 1000
 
     early = EarlyStopping(monitor='val_acc', patience=20, mode= 'auto')
-    lr = ReduceLROnPlateau(monitor='val_acc', patience=5, factor=0.9, verbose=1) 
+    lr = ReduceLROnPlateau(monitor='val_acc', patience=5, factor=0.5, verbose=1) 
     modelpath = './dacon/computer/modelcheckpoint/comv1_7_cnn8_base_3{epoch:02d}_{val_acc:.4f}.hdf5'
     cp = ModelCheckpoint(filepath=modelpath, monitor='val_acc', save_best_only=True, mode='auto')
 
@@ -137,7 +137,7 @@ for train_index, valid_index in skf.split(x_train) :
     model.save_weights('./dacon/computer/h5/baseline3_weight.h5')
     model.save('./dacon/computer/h5/baseline3_model.h5')
     
-    result += model.predict(test_generator,verbose=True)/5
+    result += model.predict(test_generator,verbose=True)/50
     
     # save val_loss
     hist = pd.DataFrame(learning_history.history)
