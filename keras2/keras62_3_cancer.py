@@ -50,7 +50,16 @@ def create_hyperparameter() :
     batchs = [50, 60, 70]
     optimizers = ['rmsprop', 'adam', 'adadelta']
     dropout = [0.1, 0.2, 0.3]
-    return {'batch_size' : batchs, 'optimizer' : optimizers, 'drop':dropout}   
+    return {'batch_size' : batchs, 'optimizer' : optimizers, 'drop':dropout} 
+
+def callbacks():
+    modelpath ='../data/modelcheckpoint/k62_3_{epoch:2d}_{val_loss:.4f}.hdf5'
+    er = EarlyStopping(monitor = 'val_loss',patience=5)
+    mo = ModelCheckpoint(monitor = 'val_loss',filepath = modelpath,save_best_only=True)
+    lr = ReduceLROnPlateau(monitor = 'val_loss',patience=3)
+    return er,mo,lr
+
+er,mo,lr = callbacks()  
 
 hyperparameters = create_hyperparameter()
 
@@ -58,11 +67,6 @@ model2 = KerasClassifier(build_fn=build_model, verbose = 1)   #, epochs = 2)
 
 search = RandomizedSearchCV(model2, hyperparameters, cv=3)
 # search = GridSearchCV(model2, hyperparameters, cv=3)
-
-path = '../data/modelcheckpoint/k62_1_{epoch:2d}_{val_loss:.4f}.hdf5'
-er = EarlyStopping(monitor='val_loss', patience=5, mode='auto')
-lr = ReduceLROnPlateau(monitor='val_loss', factor=0.3, patience=3, verbose=1)
-mo = ModelCheckpoint(filepath=path, monitor='val_loss', save_best_only=True, mode='auto')
 
 search.fit(x_train, y_train, verbose=1, epochs = 100, validation_split = 0.2, callbacks = [er, lr, mo])
 

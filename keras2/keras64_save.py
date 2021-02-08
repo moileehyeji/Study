@@ -9,10 +9,11 @@ warnings.filterwarnings('ignore')
 import pickle
 import joblib
 
-from tensorflow.keras.models import Sequential, Model
+from tensorflow.keras.models import Sequential, Model, load_model
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.utils import to_categorical
+from sklearn.metrics import accuracy_score
 
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 
@@ -71,22 +72,31 @@ print('최종스코어 : ', acc)     # 최종스코어 :  0.9638000130653381
 
 
 
-# 모델저장
-search.best_estimator_.model.save('../data/h5/k64_Random_model.save.h5')       
+# 모델저장 : 모두 저장은 되지만 load는 model.save만 됨
+search.best_estimator_.model.save('../data/h5/k64_Random_model.save.h5') 
+pickle.dump(search.best_estimator_.model, open('../data/h5/k64_Random_model.save.pickle.dat', 'wb'))        
 pickle.dump(model2, open('../data/h5/k64_Random_model2.save.pickle.dat', 'wb'))  
-pickle.dump(search.best_estimator_.model, open('../data/h5/k64_Random_model.save.pickle.dat', 'wb'))          
-
-# search.best_estimator_.model.save('../data/h5/k64_Grid_model.save.h5')      
+        
+# search.best_estimator_.model.save('../data/h5/k64_Grid_model.save.h5') 
+# # pickle.dump(search.best_estimator_, open('../data/h5/k64_Grid_model2.save.pickle.dat', 'wb'))     
 # pickle.dump(model2, open('../data/h5/k64_Grid_model2.save.pickle.dat', 'wb'))                                  
-# pickle.dump(search.best_estimator_, open('../data/h5/k64_Grid_model2.save.pickle.dat', 'wb'))  
+  
 print('저장완료')
 
 '''
-pickle_model1 = pickle.load(open('../data/h5/k64_Random_model2.save.pickle.dat', 'rb'))
-# pickle_model2 = pickle.load(open('../data/h5/k64_Random_model.save.pickle.dat', 'rb'))
+# 모델 불러오기
+# pickle_model = pickle.load(open('../data/h5/k64_Random_model2.save.pickle.dat', 'rb'))    #안됨
+# -> AttributeError :  'build_model'속성을 가져올 수 없습니다.
+# pickle_model = pickle.load(open('../data/h5/k64_Random_model.save.pickle.dat', 'rb'))     #안됨
+model3 = load_model('../data/h5/k64_Random_model.save.h5')                                  #됨
 print('불러왔다')
-acc = pickle_model1.score(x_test, y_test)
-print('pickle_model1.score : ',acc)
+
+# 평가
+# acc = pickle_model.score(x_test, y_test)
+y_pred = model3.predict(x_test)
+y_pred = np.argmax(y_pred, axis=1)
+y_test = np.argmax(y_test, axis=1)
+print('score : ',accuracy_score(y_test, y_pred))    # score :  0.9678
 
 
 '''

@@ -41,16 +41,6 @@ def create_hyperparameter() :
     optimizers = ['rmsprop', 'adam', 'adadelta']
     dropout = [0.1, 0.2, 0.3]
     return {'batch_size' : batchs, 'optimizer' : optimizers, 'drop':dropout}  
-'''
-def callbacks():
-    modelpath = "../data/modelcheckpoint/keras64_save.hdf5"
-    es = EarlyStopping(monitor = 'val_loss',patience=10)
-    cp = ModelCheckpoint(monitor = 'val_loss',filepath = modelpath,save_best_only=True)
-    reLR = ReduceLROnPlateau(monitor = 'val_loss',patience=5)
-    return es,reLR,cp
-
-es,reLR,cp = callbacks()
-''' 
 
 hyperparameters = create_hyperparameter()
 model = build_model()

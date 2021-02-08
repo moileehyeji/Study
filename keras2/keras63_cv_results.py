@@ -44,6 +44,7 @@ def create_hyperparameter() :
     dropout = [0.1, 0.2, 0.3]
     return {'batch_size' : batchs, 'optimizer' : optimizers, 'drop':dropout}   
 
+
 hyperparameters = create_hyperparameter()
 model = build_model()
 
