@@ -51,9 +51,6 @@ def create_hyperparameter() :
 hyperparameters = create_hyperparameter()
 model = build_model()
 
-#===========================================================================================래핑 :  KerasClassifier
-# TypeError: If no scoring is specified, the estimator passed should have a 'score' method. 
-# The estimator <tensorflow.python.keras.engine.functional.Functional object at 0x000001AE964FBE80> does not.
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 model2 = KerasClassifier(build_fn=build_model, verbose = 1)
 
@@ -69,9 +66,8 @@ search.fit(x_train, y_train)
 acc = search.score(x_test, y_test) 
 print(search.best_params_)      # 최적의 파라미터 값 출력
 print(search.best_estimator_)   
-print(search.best_score_)       # 최고의 점수
-print('최종스코어 : ', acc)     # 최종스코어 :  0.9638000130653381
-
+print(search.best_score_)       # 최고의 점수 :  0.955216666062673
+print('최종스코어 : ', acc)     # 최종스코어 :  0.953000009059906
 '''
 =========================================KerasClassifier 사용전 : 
 mnist_DNN : 

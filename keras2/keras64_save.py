@@ -97,6 +97,7 @@ y_pred = model3.predict(x_test)
 y_pred = np.argmax(y_pred, axis=1)
 y_test = np.argmax(y_test, axis=1)
 print('score : ',accuracy_score(y_test, y_pred))    # score :  0.9678
+print(y_pred.shape) # (10000,)
 
 
 '''
