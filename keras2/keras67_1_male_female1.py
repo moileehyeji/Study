@@ -56,11 +56,13 @@ print(xy_train[0][0].shape)     # x (463, 64, 64, 3)
 print(xy_val[0][1].shape)       # y (32,)
 
 # train, test npy 저장
-np.save('../data/Image/gender/npy/keras67_1_train_x.npy', arr=xy_train[0][0])
-np.save('../data/Image/gender/npy/keras67_1_train_y.npy', arr=xy_train[0][1])
-np.save('../data/Image/gender/npy/keras67_1_val_x.npy', arr=xy_val[0][0])
-np.save('../data/Image/gender/npy/keras67_1_val_y.npy', arr=xy_val[0][1])
+# np.save('../data/Image/gender/npy/keras67_1_train_x.npy', arr=xy_train[0][0])
+# np.save('../data/Image/gender/npy/keras67_1_train_y.npy', arr=xy_train[0][1])
+# np.save('../data/Image/gender/npy/keras67_1_val_x.npy', arr=xy_val[0][0])
+# np.save('../data/Image/gender/npy/keras67_1_val_y.npy', arr=xy_val[0][1])
 
+
+'''
 # 2. 모델
 def build_model(drop=0.5, optimizer=Adam, filters=100, kernel_size=2, learning_rate=0.1):
     model = Sequential()
@@ -118,6 +120,9 @@ val_acc = history.history['val_acc']
 loss = history.history['loss']
 val_loss = history.history['val_loss']
 
+print('acc : ', np.mean(acc))
+print('val_acc : ', np.mean(val_acc))
+'''
 '''
 # 시각화 할 것
 # val_loss와 loss의 간격이 좁을수록 좋은 성능
@@ -133,8 +138,7 @@ plt.legend(['train loss', 'val loss', 'train acc', 'val acc'])
 plt.show()
 '''
 
-print('acc : ', np.mean(acc))
-print('val_acc : ', np.mean(val_acc))
+
 
 '''
 acc :  0.515537829041481
