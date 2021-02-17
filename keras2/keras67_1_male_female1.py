@@ -43,7 +43,7 @@ xy_val = train_datagen.flow_from_directory(
     '../data/Image/gender',
     target_size = (32,32),               
     batch_size = batch_size2,
-    class_mode = 'binary',               
+    class_mode = 'binary',                
     subset = 'validation'
 )
 # Found 1216 images belonging to 3 classes.
