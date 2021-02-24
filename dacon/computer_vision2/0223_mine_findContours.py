@@ -29,7 +29,7 @@ cv2.imshow('Edged', edged)
 kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
 closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
 cv2.imshow('closed', closed)
-# cv2.waitKey(0)
+cv2.waitKey(0)
 # close이미지와 findContours()를 이용하여 컨투어 경계를 찾기
 contours, _ = cv2.findContours(closed.copy(),cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 total = 0
