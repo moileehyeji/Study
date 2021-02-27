@@ -103,7 +103,7 @@ def seed_everything(seed: int = 42):
 class EfficientNet_MultiLabel(nn.Module):
     def __init__(self, in_channels):
         super(EfficientNet_MultiLabel, self).__init__()
-        self.network = EfficientNet.from_pretrained('efficientnet-b0', in_channels=in_channels)
+        self.network = EfficientNet.from_pretrained('efficientnet-b3', in_channels=in_channels)
         self.output_layer = nn.Linear(1000, 26)
 
     def forward(self, x):
@@ -125,13 +125,11 @@ for train_idx, valid_idx in kf.split(imgs):
 ### seed_everything(42)
 
 # 5개의 fold 모두 실행하려면 for문을 5번 돌리면 됩니다.
-for fold in range(5):
+for fold in range(3):
     model = EfficientNet_MultiLabel(in_channels=3).to(device)
 #   model = nn.DataParallel(model)
     train_idx = folds[fold][0]
     valid_idx = folds[fold][1]
-
-
 
     train_transform = transforms.Compose([
         transforms.ToTensor(),
@@ -143,8 +141,8 @@ for fold in range(5):
         ])
 
 
-    epochs=30
-    batch_size=5        # 자신의 VRAM에 맞게 조절해야 OOM을 피할 수 있습니다.
+    epochs=32
+    batch_size=8        # 자신의 VRAM에 맞게 조절해야 OOM을 피할 수 있습니다.
 
     # epochs=25
     # batch_size=42        # 자신의 VRAM에 맞게 조절해야 OOM을 피할 수 있습니다.
@@ -219,7 +217,7 @@ for fold in range(5):
             valid_accuracy.append(np.mean(valid_batch_accuracy))
             
         if np.mean(valid_batch_accuracy)>valid_best_accuracy:
-            torch.save(model.state_dict(), 'C:/Study/dacon/computer2/data/csv/EfficientNetB0-fold{}.pt'.format(fold))
+            torch.save(model.state_dict(), 'C:/Study/dacon/computer2/data/csv/EfficientNetB3-fold{}.pt'.format(fold))
             valid_best_accuracy = np.mean(valid_batch_accuracy)
         print('fold : {}\tepoch : {:02d}\ttrain_accuracy / loss : {:.5f} / {:.5f}\tvalid_accuracy / loss : {:.5f} / {:.5f}\ttime : {:.0f}'.format(fold+1, epoch+1,
                                                                                                                                               np.mean(batch_accuracy_list),
@@ -245,7 +243,7 @@ submission = pd.read_csv('C:/Study/dacon/computer2/data/sample_submission.csv')
 with torch.no_grad():
     for fold in range(1):
         model = EfficientNet_MultiLabel(in_channels=3).to(device)
-        model.load_state_dict(torch.load('C:/Study/dacon/computer2/data/csv/EfficientNetB0-fold{}.pt'.format(fold)))
+        model.load_state_dict(torch.load('C:/Study/dacon/computer2/data/csv/EfficientNetB3-fold{}(2).pt'.format(fold)))
         model.eval()
 
         test_dataset = MnistDataset_v2(imgs = test_imgs, transform=test_transform, train=False)
@@ -260,8 +258,8 @@ with torch.no_grad():
 
 # 제출물 생성                                                                                                                      
 submission.iloc[:,1:] = np.where(submission.values[:,1:]>=0.5, 1,0)
-submission.to_csv('C:/Study/dacon/computer2/data/csv/EfficientNetB0-fold0.csv', index=False)  
+submission.to_csv('C:/Study/dacon/computer2/data/csv/EfficientNetB3-fold0(2).csv', index=False)  
 
-# 24시간 걸림
-# 87등/0.75883
-#b0/ 5fold / 8batch / EfficientNetB0-fold0.csv
+
+#b3/ 5fold / 8batch / EfficientNetB3-fold0.csv
+#b3/ 3fold / 8batch / EfficientNetB3-fold0(2).csv

@@ -25,20 +25,24 @@ cv2.imshow('image_data',image_data)
 # 외곽검출
 edged = cv2.Canny(image_data, 10, 250)
 cv2.imshow('Edged', edged)
+
 # 엣지 이미지로 closed를 찾기(끊어지지 않는 선)
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3,3))
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
 closed = cv2.morphologyEx(edged, cv2.MORPH_CLOSE, kernel)
 cv2.imshow('closed', closed)
-# cv2.waitKey(0)
+cv2.waitKey(0)
+
 # close이미지와 findContours()를 이용하여 컨투어 경계를 찾기
 contours, _ = cv2.findContours(closed.copy(),cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 total = 0
-""" # 외곽선 그리는 용도. 이미지에 그리기 때문에 이 코드 적용하면 원래 이미지에
+""" 
+# 외곽선 그리는 용도. 이미지에 그리기 때문에 이 코드 적용하면 원래 이미지에
 # 초록색 선 생김
 contours_image = cv2.drawContours(image, contours, -1, (0,255,0), 3)
 cv2.imshow('contours_image', contours_image)
 cv2.waitKey(0)
-cv2.destroyAllWindows() """
+cv2.destroyAllWindows() 
+"""
 
 contours_xy = np.array(contours)
 print(contours_xy.shape)
