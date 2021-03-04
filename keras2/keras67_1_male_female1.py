@@ -34,14 +34,14 @@ batch_size1 = 1216
 batch_size2 = 520
 xy_train = train_datagen.flow_from_directory(
     '../data/Image/gender',
-    target_size = (32,32),                
+    target_size = (96,96),                
     batch_size = batch_size1,
     class_mode = 'binary',               
     subset = 'training'
 )
 xy_val = train_datagen.flow_from_directory(
     '../data/Image/gender',
-    target_size = (32,32),               
+    target_size = (96,96),               
     batch_size = batch_size2,
     class_mode = 'binary',                
     subset = 'validation'
@@ -56,10 +56,10 @@ print(xy_train[0][0].shape)     # x (463, 64, 64, 3)
 print(xy_val[0][1].shape)       # y (32,)
 
 # train, test npy 저장
-# np.save('../data/Image/gender/npy/keras67_1_train_x.npy', arr=xy_train[0][0])
-# np.save('../data/Image/gender/npy/keras67_1_train_y.npy', arr=xy_train[0][1])
-# np.save('../data/Image/gender/npy/keras67_1_val_x.npy', arr=xy_val[0][0])
-# np.save('../data/Image/gender/npy/keras67_1_val_y.npy', arr=xy_val[0][1])
+np.save('../data/Image/gender/npy/keras67_1_96_train_x.npy', arr=xy_train[0][0])
+np.save('../data/Image/gender/npy/keras67_1_96_train_y.npy', arr=xy_train[0][1])
+np.save('../data/Image/gender/npy/keras67_1_96_val_x.npy', arr=xy_val[0][0])
+np.save('../data/Image/gender/npy/keras67_1_96_val_y.npy', arr=xy_val[0][1])
 
 
 '''
