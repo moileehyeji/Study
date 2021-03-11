@@ -11,14 +11,18 @@ x_data = [[73., 80., 75.],
           [73., 66., 70.]]  #(5,3)
 y_data = [[152.], [185.], [180.], [196.], [142.]]   #(5,1)
 
+#------------------------------------------------------------------1layer : 다층일때 쉐이프 맞추기가 중요
 x = tf.placeholder(tf.float32, shape=[None, 3])
 y = tf.placeholder(tf.float32, shape=[None, 1])
 
+# x_data(5,3) * w[3,1]
 w = tf.Variable(tf.random_normal([3,1]), name = 'weight')
 b = tf.Variable(tf.random_normal([1]), name = 'bias')
 
 # hypothesis = x * w + b
 hypothesis = tf.matmul(x, w) + b
+#------------------------------------------------------------------1layer
+
 
 #[실습]
 # verbose : step, cost, hypothesis
