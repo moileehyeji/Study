@@ -3,7 +3,7 @@ print(tf.__version__)
 
 # 텐서플로 3가지 자료형
 # 1. constant
-# 2. 입력값?
+# 2. placeholder
 # 3. variable
 
 hello = tf.constant('Hello World')  #3가지 자료형중 하나 node를 만들어주는 개념

@@ -18,12 +18,24 @@ WHY? base 건드리면 돌이키기 어렵
 
 2. 가상환경에 텐서플로(==1.14) 설치하자
     -> pip install tensorflow==1.14
-        * 에러 뜰거야 could not부터 검색해봐
+        # 에러발생
+        ERROR: Could n버전ot install packages due to an OSError: [Errno 2] No such file or directory: 'C:\\Users\\Admin\\AppData\\Local\\Temp\\pip-unpack-bnghfqog\\protobuf-3.15.5-cp36-cp36m-win_amd64.whl'
+
+        # 오른쪽아래 여우모양 아이콘 윈도우 보호 프로그램인 action recomended 의 malware를 enable 로 바꾼다.
+
+
+3. 가상황경에 넘파이 설치하자
+    ->pip uninstall numpy
+
+    ->conda search numpy
+
+    ->pip install numpy==1.16
 
 
 
---------------------------------------------------------------------------영리꺼--------------------------------------------------------------------------영리꺼
-가상환경설치가자
+--------------------------------------------------------------------------영리꺼
+가상환경설치가자!!
+
 ---
 cmd켜
 conda create -n tf114 python=3.6.5
@@ -110,6 +122,18 @@ numpy                1.19.5
 
 (tf114) C:\Users\Admin>pip install numpy==1.16
 입력해서 다시 설치
+
+(tf114) C:\Users\Admin>python
+하고
+import tensorflow as tf
+하면 >>> 모양으로 바로 넘어감을 확인
+
+# ==================================
+# 비주얼코드 창 다 닫아!
+# 그리고 다시 켜라!
+
+tf114 폴더 만들고 이제부터 vs코드로 이동
+
 --------------------------------------------------------------------------영리꺼
 
 
@@ -117,8 +141,3 @@ numpy                1.19.5
 
 
 
-pip uninstall numpy
-
-conda search numpy
-
-pip install numpy==1.16

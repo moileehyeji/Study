@@ -1,11 +1,3 @@
-# 텐서머신 만들자!
-# y = wx + b
-# x : placeholder
-# x, b: variable
-# 성킴교수 강의 참고하심
-# https://www.youtube.com/watch?v=TxIVr-nk1so&list=PLlMkM4tgfjnLSOjrEJN31gZATbcj_MpUm&index=7
-# https://github.com/hunkim/DeepLearningZeroToAll/blob/master/lab-03-2-minimizing_cost_gradient_update.py
-
 import tensorflow as tf 
 
 tf.set_random_seed(66)  # 랜덤값 고정
@@ -47,18 +39,32 @@ gradient = tf.reduce_mean((W * X - Y) * X)
 descent = W - learning_rate * gradient
 update = W.assign(descent) 
 """
-optimizer = tf.train.GradientDescentOptimizer(learning_rate = 0.01)
+# optimizer = tf.train.GradientDescentOptimizer(learning_rate = 0.01)
+# #loss가 minimize될 때까지 훈련시키겠다!
+# train = optimizer.minimize(cost)
+# --------------->
+train = tf.train.GradientDescentOptimizer(learning_rate = 0.01).minimize(cost)  # 위의 두줄과 같은 의미
 
-#loss가 minimize될 때까지 훈련시키겠다!
-train = optimizer.minimize(cost)
 
-sess = tf.Session()
+""" sess = tf.Session()
 sess.run(tf.global_variables_initializer())
-
 for step in range(2001):
     sess.run(train)
     if step % 20 == 0:
         #verbose
         print(step,sess.run(cost), sess.run(W), sess.run(b))
         #     epoch,loss,           가중치,      절편   
+# 세션 닫기
+sess.close() """
+
+# --------------->메모리가 끝나면 세션을 자동으로 닫아주는 with문
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+
+    for step in range(2001):
+        sess.run(train)
+        if step % 20 == 0:
+            #verbose
+            print(step,sess.run(cost), sess.run(W), sess.run(b))
+            #     epoch,loss,           가중치,      절편   
  
