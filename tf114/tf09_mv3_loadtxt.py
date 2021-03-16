@@ -5,7 +5,7 @@ tf.set_random_seed(66)
 #---------------------------------------------numpy
 # 텐서플로2처럼 넘파이 사용이 가능!
 # csv 로드는 np.loadtxt('.csv', delimiter=',', dtype=np.float32)
-
+# batch_size지정해서 가져오는 방법이 있음 -> https://youtu.be/o2q4QNnoShY
 dataset = np.loadtxt('C:/data/csv/wine/data-01-test-score.csv', delimiter=',', dtype=np.float32)
 
 # [실습]
