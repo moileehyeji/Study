@@ -32,7 +32,7 @@ train_data = 1216
 val_data = 520
 batch_size1 = 1216
 batch_size2 = 520
-xy_train = train_datagen.flow_from_directory(
+''' xy_train = train_datagen.flow_from_directory(
     '../data/Image/gender',
     target_size = (96,96),                
     batch_size = batch_size1,
@@ -45,21 +45,32 @@ xy_val = train_datagen.flow_from_directory(
     batch_size = batch_size2,
     class_mode = 'binary',                
     subset = 'validation'
+)  '''
+
+xy = test_dategen.flow_from_directory(
+    '../data/Image/gender/img',
+    target_size=(40,40),
+    batch_size = 2000,
+    class_mode = 'binary',
+    color_mode='grayscale'
 )
 # Found 1216 images belonging to 3 classes.
 # Found 520 images belonging to 3 classes.
 
 # print(train_generator[0])     # x, y 모두 가지고 있음
 # print(train_generator[0][0])  # x
-print(xy_train[0][0].shape)     # x (463, 64, 64, 3)
+# print(xy_train[0][0].shape)     # x (463, 64, 64, 3)
 # print(train_generator[0][1])  # y 
-print(xy_val[0][1].shape)       # y (32,)
+# print(xy_val[0][1].shape)       # y (32,)
 
-# train, test npy 저장
-np.save('../data/Image/gender/npy/keras67_1_96_train_x.npy', arr=xy_train[0][0])
+# # train, test npy 저장
+''' np.save('../data/Image/gender/npy/keras67_1_96_train_x.npy', arr=xy_train[0][0])
 np.save('../data/Image/gender/npy/keras67_1_96_train_y.npy', arr=xy_train[0][1])
 np.save('../data/Image/gender/npy/keras67_1_96_val_x.npy', arr=xy_val[0][0])
-np.save('../data/Image/gender/npy/keras67_1_96_val_y.npy', arr=xy_val[0][1])
+np.save('../data/Image/gender/npy/keras67_1_96_val_y.npy', arr=xy_val[0][1]) '''
+
+# train, test npy 저장
+np.save('../data/Image/gender/npy/keras67_1_a08_train_x.npy', arr=xy[0][0])
 
 
 '''
